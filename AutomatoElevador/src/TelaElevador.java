@@ -207,7 +207,7 @@ public class TelaElevador extends JFrame implements ActionListener {
 							String andarAtual = String.valueOf(elevador.getAndarAtual());
 							if (andarAtual.equals("0"))
 								andarAtual = "T";
-							TelaPainelElevador painelElevador = new TelaPainelElevador(fr, andarAtual);
+							TelaPainelElevador painelElevador = new TelaPainelElevador(fr, andarAtual, elevador);
 
 							elevador.setAndares(painelElevador.elevador.getAndares());
 							controleElevador();
@@ -240,9 +240,12 @@ public class TelaElevador extends JFrame implements ActionListener {
 		if (elevador.getDirecao() == 0) {
 			// verifica os andares abaixo de tem algum ativado
 			boolean temAtivado = false;
+			int qtdParadas = 0;
 			for (int i = elevador.getAndarAtual() - 1; i >= 0; i--) {
-				if (elevador.getAndares(i))
+				if (elevador.getAndares(i)) {
 					temAtivado = true;
+					qtdParadas++;
+				}
 			}
 
 			if (temAtivado) {
@@ -253,8 +256,8 @@ public class TelaElevador extends JFrame implements ActionListener {
 						if (i == 0)
 							elevador.setDirecao(1);
 
-							abrirPortaExibirPainel(i);
-
+						abrirPortaExibirPainel(i);
+						return;
 					}
 				}
 			} else {
@@ -266,10 +269,13 @@ public class TelaElevador extends JFrame implements ActionListener {
 		else {
 			// verifica os andares abaixo de tem algum ativado
 			boolean temAtivado = false;
+			int qtdParadas = 0;
 			for (int i = elevador.getAndarAtual() + 1; i < 5; i++) {
 				{
-					if (elevador.getAndares(i))
+					if (elevador.getAndares(i)) {
 						temAtivado = true;
+						qtdParadas++;
+					}
 				}
 			}
 
@@ -282,7 +288,7 @@ public class TelaElevador extends JFrame implements ActionListener {
 							elevador.setDirecao(0);
 
 						abrirPortaExibirPainel(i);
-
+						return;
 					}
 				}
 			} else {
@@ -292,9 +298,8 @@ public class TelaElevador extends JFrame implements ActionListener {
 
 		}
 	}
-	
-	public void abrirPortaExibirPainel(int i)
-	{
+
+	public void abrirPortaExibirPainel(int i) {
 		// abrir porta
 		abrirPorta(String.valueOf(i));
 
@@ -312,7 +317,7 @@ public class TelaElevador extends JFrame implements ActionListener {
 				if (andarAtual.equals("0"))
 					andarAtual = "T";
 
-				TelaPainelElevador painelElevador = new TelaPainelElevador(fr, andarAtual);
+				TelaPainelElevador painelElevador = new TelaPainelElevador(fr, andarAtual, elevador);
 
 				elevador.setAndares(painelElevador.elevador.getAndares());
 				controleElevador();

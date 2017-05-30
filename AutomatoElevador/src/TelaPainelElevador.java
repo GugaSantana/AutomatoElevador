@@ -23,7 +23,7 @@ public class TelaPainelElevador extends JDialog implements ActionListener {
 	ListaChamadas lista = new ListaChamadas();
 	Elevador elevador = new Elevador();
 
-	public TelaPainelElevador(JFrame fr, String andarAtual) {
+	public TelaPainelElevador(JFrame fr, String andarAtual, Elevador elevadorAtivo) {
 		super(fr, true);
 		setTitle("Painel Elevador");
 		setLayout(new BorderLayout());
@@ -36,11 +36,19 @@ public class TelaPainelElevador extends JDialog implements ActionListener {
 		for (int i = 0; i < 5; i++) {
 			bAndar[i] = new JButton("" + i);
 			bAndar[i].addActionListener(this);
+
+			// Pega as configurações ja existentes dentro do elevado
+			// e repassa para essa tela
+			if (elevadorAtivo.getAndares(i) == true && elevadorAtivo.getAndarAtual() != i) {
+				bAndar[i].setBackground(Color.red);
+				lista.add(i);
+				elevador.setAndares(i, true);
+			}
 		}
-		
+
 		bFecharPorta = new JButton("> <");
 		bFecharPorta.addActionListener(this);
-		
+
 		lAndarAtual = new JLabel(andarAtual);
 		Font fonteTitulo = new Font("Arial", Font.BOLD, 20);
 		lAndarAtual.setFont(fonteTitulo);
@@ -48,17 +56,17 @@ public class TelaPainelElevador extends JDialog implements ActionListener {
 		lAndarAtual.setHorizontalAlignment(SwingConstants.CENTER);
 		lAndarAtual.setOpaque(true);
 		lAndarAtual.setBackground(Color.WHITE);
-		
+
 		// formatacao do formulario
 		GridBagConstraints gBC = new GridBagConstraints();
 		gBC.fill = GridBagConstraints.HORIZONTAL;
 		gBC.anchor = GridBagConstraints.NORTHWEST;
-		
+
 		gBC.gridx = 0;
 		gBC.gridy = 0;
 		gBC.insets = new Insets(5, 5, 20, 5);
 		pPainelElevador.add(lAndarAtual, gBC);
-		
+
 		gBC.gridx = 0;
 		gBC.gridy = 1;
 		gBC.insets = new Insets(5, 5, 5, 5);
@@ -83,13 +91,12 @@ public class TelaPainelElevador extends JDialog implements ActionListener {
 		gBC.gridy = 5;
 		gBC.insets = new Insets(5, 5, 5, 5);
 		pPainelElevador.add(bAndar[0], gBC);
-		
+
 		gBC.gridx = 0;
 		gBC.gridy = 6;
 		gBC.insets = new Insets(20, 5, 5, 5);
 		pPainelElevador.add(bFecharPorta, gBC);
 
-		
 		add(pPainelElevador, BorderLayout.CENTER);
 
 		setSize(200, 400);
@@ -101,46 +108,32 @@ public class TelaPainelElevador extends JDialog implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
 		for (int i = 0; i < 5; i++) {
-			if(e.getSource() == bAndar[i])
-			{
+			if (e.getSource() == bAndar[i]) {
 				int andarAtual;
-				try
-				{
-				andarAtual = Integer.parseInt(lAndarAtual.getText());
-				}catch(Exception ex)
-				{
+				try {
+					andarAtual = Integer.parseInt(lAndarAtual.getText());
+				} catch (Exception ex) {
 					andarAtual = 0;
 				}
-				
-				if(i != andarAtual)
-				{
-					if(elevador.getAndares(i) == false)
-					{
+
+				if (i != andarAtual) {
+					if (elevador.getAndares(i) == false) {
 						bAndar[i].setBackground(Color.red);
 						lista.add(i);
 						elevador.setAndares(i, true);
 					}
-					else
-					{
-						bAndar[i].setBackground(null);
-						lista.removeUltimo();
-						elevador.setAndares(i, false);
-					
-					}
-					
+
 				}
-			}			
+			}
 		}
-		
-		if (e.getSource() == bFecharPorta)
-		{
+
+		if (e.getSource() == bFecharPorta) {
 			boolean sequencia[] = elevador.getAndares();
 			String texto = "";
-			for(int i = 0; i < sequencia.length; i++)
-			{
+			for (int i = 0; i < sequencia.length; i++) {
 				texto += i + " - " + sequencia[i] + "\n";
 			}
-		
+
 			this.dispose();
 		}
 	}
