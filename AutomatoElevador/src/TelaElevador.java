@@ -97,14 +97,14 @@ public class TelaElevador extends JFrame implements ActionListener {
 
 	// Todas as portas do elevador ficam fechadas
 	public void fecharPorta(String andar) {
-		ImageIcon imagem = new ImageIcon("C:/Users/Guga/Desktop/Elevador/" + andar + "-semi.jpg");
+		ImageIcon imagem = new ImageIcon(getClass().getResource(andar + "-semi.jpg"));
 		lElevador.setIcon(imagem);
 
 		Timer time = new Timer(250, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				ImageIcon imagem = new ImageIcon("C:/Users/Guga/Desktop/Elevador/predio(fechado).jpg");
+				ImageIcon imagem = new ImageIcon(getClass().getResource("predio(fechado).jpg"));
 				lElevador.setIcon(imagem);
 			}
 		});
@@ -114,14 +114,14 @@ public class TelaElevador extends JFrame implements ActionListener {
 
 	// Animação Abre porta
 	public void abrirPorta(String andar) {
-		ImageIcon imagem = new ImageIcon("C:/Users/Guga/Desktop/Elevador/" + andar + "-semi.jpg");
+		ImageIcon imagem = new ImageIcon(getClass().getResource(andar + "-semi.jpg"));
 		lElevador.setIcon(imagem);
 
 		Timer time = new Timer(250, new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				// TODO Auto-generated method stub
-				ImageIcon imagem = new ImageIcon("C:/Users/Guga/Desktop/Elevador/" + andar + "-aberto.jpg");
+				ImageIcon imagem = new ImageIcon(getClass().getResource(andar + "-aberto.jpg"));
 				lElevador.setIcon(imagem);
 			}
 		});

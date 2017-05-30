@@ -98,9 +98,11 @@ public class TelaPainelElevador extends JDialog implements ActionListener {
 		pPainelElevador.add(bFecharPorta, gBC);
 
 		add(pPainelElevador, BorderLayout.CENTER);
+		
 
 		setSize(200, 400);
-		setLocationRelativeTo(null);
+		setLocation(400, 200);
+		//setLocationRelativeTo(null);
 		setVisible(true);
 	}
 
