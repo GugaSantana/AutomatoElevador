@@ -1,3 +1,5 @@
+import java.applet.Applet;
+import java.applet.AudioClip;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.GridBagConstraints;
@@ -5,13 +7,12 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.lang.reflect.AnnotatedArrayType;
+import java.net.URL;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -111,7 +112,7 @@ public class TelaElevador extends JFrame implements ActionListener {
 		time.setRepeats(false);
 		time.start();
 	}
-
+		
 	// Animação Abre porta
 	public void abrirPorta(String andar) {
 		ImageIcon imagem = new ImageIcon(getClass().getResource(andar + "-semi.jpg"));
@@ -123,6 +124,12 @@ public class TelaElevador extends JFrame implements ActionListener {
 				// TODO Auto-generated method stub
 				ImageIcon imagem = new ImageIcon(getClass().getResource(andar + "-aberto.jpg"));
 				lElevador.setIcon(imagem);
+				
+				//Audio
+				URL url = getClass().getResource("clarinete.wav");
+				AudioClip audio = Applet.newAudioClip(url);
+				audio.play();
+				
 			}
 		});
 		time.setRepeats(false);
