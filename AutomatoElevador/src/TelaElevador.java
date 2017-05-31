@@ -2,10 +2,14 @@ import java.applet.Applet;
 import java.applet.AudioClip;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.URL;
@@ -22,18 +26,24 @@ public class TelaElevador extends JFrame implements ActionListener {
 
 	private JPanel pElevador;
 	private JLabel lElevador;
-	private JButton bt, bAndar[];
+	private JButton bAndar[];
 	private JLabel cont;
 	private Timer tm = new Timer(100, this);
 	Elevador elevador = new Elevador();
 	TelaPainelElevador painelElevador;
-	private boolean tudoFechado = true;
+	private boolean tudoFechado = false;
+
+	URL urlSomElevador = getClass().getResource("somelevador.wav");
+	AudioClip audioElevador = Applet.newAudioClip(urlSomElevador);
+
+	URL urlSomGato = getClass().getResource("miau.wav");
+	AudioClip audioGato = Applet.newAudioClip(urlSomGato);
 
 	public TelaElevador() {
 		super("Elevador");
 		setLayout(new BorderLayout());
 
-		ImageIcon imagem = new ImageIcon(getClass().getResource("predio(fechado).jpg"));
+		ImageIcon imagem = new ImageIcon(getClass().getResource("0-aberto.jpg"));
 		lElevador = new JLabel("");
 		lElevador.setIcon(imagem);
 
@@ -45,6 +55,7 @@ public class TelaElevador extends JFrame implements ActionListener {
 		for (int i = 0; i < 5; i++) {
 			bAndar[i] = new JButton("O");
 			bAndar[i].addActionListener(this);
+			bAndar[i].setBackground(Color.GRAY);
 		}
 
 		// formatacao do formulario
@@ -83,25 +94,30 @@ public class TelaElevador extends JFrame implements ActionListener {
 		gBC.insets = new Insets(5, 5, 5, 5);
 		pElevador.add(lElevador, gBC);
 
-		bt = new JButton("Cont");
-		bt.addActionListener(this);
-
-		add(bt, BorderLayout.WEST);
 		add(pElevador, BorderLayout.CENTER);
 
-		cont = new JLabel("Contador: ");
+		cont = new JLabel("ANDAR: T");
 		Font fonteTitulo = new Font("Arial", Font.BOLD, 20);
 		cont.setFont(fonteTitulo);
 		cont.setAlignmentX(CENTER_ALIGNMENT);
 		cont.setHorizontalAlignment(SwingConstants.CENTER);
 		cont.setOpaque(true);
-		cont.setBackground(Color.WHITE);
 		add(cont, BorderLayout.NORTH);
+
+		pElevador.setBackground(new Color(15, 47, 96));
 
 		setVisible(true);
 		setSize(800, 500);
 		setLocationRelativeTo(null);
 		setExtendedState(JFrame.MAXIMIZED_BOTH);
+
+		Toolkit kit = Toolkit.getDefaultToolkit();
+		Image image = kit.createImage(getClass().getResource("nian.png"));
+		Point point = new Point(1, 1); //
+		// Coordenada do clique em relação à imagem
+		String nameCursor = "Image Cursor";
+		Cursor cursor = kit.createCustomCursor(image, point, nameCursor);
+		setCursor(cursor);
 	}
 
 	public static void main(String[] args) {
@@ -150,7 +166,74 @@ public class TelaElevador extends JFrame implements ActionListener {
 				// Audio
 				URL url = getClass().getResource("clarinete.wav");
 				AudioClip audio = Applet.newAudioClip(url);
+				audioElevador.stop();
 				audio.play();
+
+			}
+		}).start();
+
+		new Thread(new Runnable() {
+			public void run() {
+
+				try {
+					Thread.sleep(300);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+				// Nyan cat saindo
+				Gato gato = new Gato();
+				
+				int x = 0;
+				int y = 0;
+						
+				
+				if(andar.equals("0"))
+				{
+					x = 760;
+					y = 560;
+				}
+				
+				if(andar.equals("1"))
+				{
+					x = 760;
+					y = 430;
+				}
+				
+				if(andar.equals("2"))
+				{
+					x = 760;
+					y = 310;
+				}
+				
+				if(andar.equals("3"))
+				{
+					x = 760;
+					y = 200;
+				}
+				
+				if(andar.equals("4"))
+				{
+					x = 760;
+					y = 70;
+				}
+				
+				gato.setLocation(760, 450);
+				
+				for (int i = 0; i < 150; i++) {
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					x += 5;
+
+					gato.setLocation(x, y);
+
+				}
+				gato.dispose();
 			}
 		}).start();
 	}
@@ -158,30 +241,16 @@ public class TelaElevador extends JFrame implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		if (e.getSource() == bt) {
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					// TODO Auto-generated method stub
-					for (int i = 0; i < 20; i++) {
-						cont.setText("Contador: " + i);
-						try {
-							Thread.sleep(1000);
-						} catch (InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-				}
-			}).start();
-		}
 
 		for (int i = 0; i < 5; i++) {
 			if (e.getSource() == bAndar[i]) {
-				elevador.setAndares(i, true);
-				controleElevador();
-				bAndar[i].setBackground(Color.red);
+				if (elevador.getAndarAtual() != i) {
+					elevador.setAndares(i, true);
+					controleElevador();
+					bAndar[i].setBackground(Color.red);
+					audioGato.play();
+					bloquearBotoes();
+				}
 			}
 		}
 	}
@@ -192,7 +261,7 @@ public class TelaElevador extends JFrame implements ActionListener {
 			fecharPorta(String.valueOf(elevador.getAndarAtual()));
 		} // Desativar o botao do andar atual
 
-		bAndar[elevador.getAndarAtual()].setBackground(null);
+		bAndar[elevador.getAndarAtual()].setBackground(Color.GRAY);
 		elevador.setAndares(elevador.getAndarAtual(), false);
 
 		proximoAndar();
@@ -206,7 +275,7 @@ public class TelaElevador extends JFrame implements ActionListener {
 				for (int i = elevador.getAndarAtual() - 1; i >= 0; i--) {
 
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(1500);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -240,7 +309,7 @@ public class TelaElevador extends JFrame implements ActionListener {
 				for (int i = elevador.getAndarAtual() + 1; i < 5; i++) {
 
 					try {
-						Thread.sleep(1000);
+						Thread.sleep(1500);
 					} catch (InterruptedException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -271,6 +340,8 @@ public class TelaElevador extends JFrame implements ActionListener {
 		new Thread(new Runnable() {
 			public void run() {
 
+				audioElevador.play();
+
 				// descendo
 				// verifica os andares abaixo de tem algum ativado
 				boolean temAtivadoDescendo = false;
@@ -291,30 +362,22 @@ public class TelaElevador extends JFrame implements ActionListener {
 					}
 				}
 
-				//Verificações
-				if(temAtivadoDescendo && !temAtivadoSubindo)
-				{
+				// Verificações
+				if (temAtivadoDescendo && !temAtivadoSubindo) {
 					elevador.setDirecao(0);
-					descerAndar();										
-				}
-				else if(!temAtivadoDescendo && temAtivadoSubindo)
-				{
+					descerAndar();
+				} else if (!temAtivadoDescendo && temAtivadoSubindo) {
 					elevador.setDirecao(1);
 					subirAndar();
-				}
-				else if(temAtivadoDescendo && temAtivadoSubindo)
-				{
-					if(elevador.getDirecao() == 0)
-					{
+				} else if (temAtivadoDescendo && temAtivadoSubindo) {
+					if (elevador.getDirecao() == 0) {
 						descerAndar();
-					}
-					else
-					{
+					} else {
 						subirAndar();
-						
+
 					}
 				}
-				
+
 			}
 		}).start();
 	}
@@ -327,7 +390,7 @@ public class TelaElevador extends JFrame implements ActionListener {
 		// Abre painel para pessoa que entrou
 		JFrame fr = this;
 		elevador.setAndarAtual(i);
-		Timer timer = new Timer(800, new ActionListener() {
+		Timer timer = new Timer(2000, new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -338,7 +401,7 @@ public class TelaElevador extends JFrame implements ActionListener {
 					andarAtual = "T";
 
 				TelaPainelElevador painelElevador = new TelaPainelElevador(fr, andarAtual, elevador);
-
+				desbloquearBotoes();
 				elevador.setAndares(painelElevador.elevador.getAndares());
 
 				if (!elevador.isDesativado())
@@ -347,6 +410,18 @@ public class TelaElevador extends JFrame implements ActionListener {
 		});
 		timer.setRepeats(false);
 		timer.start();
+	}
+
+	public void bloquearBotoes() {
+		for (int i = 0; i < 5; i++) {
+			bAndar[i].setEnabled(false);
+		}
+	}
+
+	public void desbloquearBotoes() {
+		for (int i = 0; i < 5; i++) {
+			bAndar[i].setEnabled(true);
+		}
 	}
 
 }

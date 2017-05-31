@@ -1,52 +1,69 @@
+import java.applet.Applet;
+import java.applet.AudioClip;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 public class TelaPainelElevador extends JDialog implements ActionListener {
 
 	private JButton bAndar[], bFecharPorta;
+	private ImageIcon img[], imgFechar;
 	private JPanel pPainelElevador;
 	private JLabel lAndarAtual;
-	ListaChamadas lista = new ListaChamadas();
 	Elevador elevador = new Elevador();
 
+	URL urlSomGato= getClass().getResource("miau.wav");
+	AudioClip audioGato= Applet.newAudioClip(urlSomGato);
+	
 	public TelaPainelElevador(JFrame fr, String andarAtual, Elevador elevadorAtivo) {
 		super(fr, true);
 		setTitle("Painel Elevador");
 		setLayout(new BorderLayout());
-
+		
 		pPainelElevador = new JPanel(new GridBagLayout());
-
+		pPainelElevador.setBackground(new Color(15, 47, 96));
+		
+		
 		// instancia dos botoes elevador
 		bAndar = new JButton[5];
-
+		img = new ImageIcon[5];
+		
 		for (int i = 0; i < 5; i++) {
-			bAndar[i] = new JButton("" + i);
+			img[i] = new ImageIcon(getClass().getResource(i + ".png"));				
+			bAndar[i] = new JButton(img[i]);
 			bAndar[i].addActionListener(this);
 
 			// Pega as configurações ja existentes dentro do elevado
 			// e repassa para essa tela
 			if (elevadorAtivo.getAndares(i) == true && elevadorAtivo.getAndarAtual() != i) {
-				bAndar[i].setBackground(Color.red);
-				lista.add(i);
+//				bAndar[i].setBackground(Color.red);
+				img[i] = new ImageIcon(getClass().getResource(i + "a.png"));									
+				bAndar[i].setIcon(img[i]);
+				
 				elevador.setAndares(i, true);
 			}
 		}
 
-		bFecharPorta = new JButton("> <");
+		imgFechar = new ImageIcon(getClass().getResource("fechar.png"));	
+		bFecharPorta = new JButton(imgFechar);
 		bFecharPorta.addActionListener(this);
 
 		lAndarAtual = new JLabel(andarAtual);
@@ -99,9 +116,16 @@ public class TelaPainelElevador extends JDialog implements ActionListener {
 
 		add(pPainelElevador, BorderLayout.CENTER);
 		
-
-		setSize(200, 400);
-		setLocation(400, 200);
+		Toolkit kit = Toolkit.getDefaultToolkit();
+		Image image = kit.createImage(getClass().getResource("nian.png"));
+		Point point = new Point(1, 1); //
+		// Coordenada do clique em relação à imagem
+		String nameCursor = "Image Cursor";
+		Cursor cursor = kit.createCustomCursor(image, point, nameCursor);
+		setCursor(cursor);
+		
+		setSize(200, 550);
+		setLocation(380, 100);
 		//setLocationRelativeTo(null);
 		setVisible(true);
 	}
@@ -120,8 +144,11 @@ public class TelaPainelElevador extends JDialog implements ActionListener {
 
 				if (i != andarAtual) {
 					if (elevador.getAndares(i) == false) {
-						bAndar[i].setBackground(Color.red);
-						lista.add(i);
+						audioGato.play();
+						//bAndar[i].setBackground(Color.red);
+						img[i] = new ImageIcon(getClass().getResource(i + "a.png"));									
+						bAndar[i].setIcon(img[i]);
+						
 						elevador.setAndares(i, true);
 					}
 
