@@ -135,8 +135,8 @@ public class TelaPainelElevador extends JDialog implements ActionListener {
 			for (int i = 0; i < sequencia.length; i++) {
 				texto += i + " - " + sequencia[i] + "\n";
 			}
-
-			this.dispose();
+			
+			this.dispose();			
 		}
 	}
 }
